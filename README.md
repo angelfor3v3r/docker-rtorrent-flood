@@ -1,7 +1,7 @@
 # docker-rtorrent-flood
 rTorrent & Flood for Docker.
 
-### Usage
+## Usage
 1. Edit `docker-compose.yml` and set up your volumes for rTorrent:
 ```
 # Your session, files and watch directories should be relative to the "/rtorrent" directrory. Heres an example:
@@ -26,7 +26,7 @@ services:
         
         # replace "flood_data_path", "files_path" and "watch_path" with your own directories.
         # note that "scgi.sock" must come from your "rtorrent session" path in step #1.
-        # ... and the same for 
+        # ... and "files_path" must be the same as step #1.
         volumes:
             - "/flood_data_path:/data"             # flood data
             - "/files_path:/rtorrent/files"        # rtorrent files (local path should be the same as rTorrent)
@@ -41,11 +41,11 @@ services:
 
 4. Access `server ip(localhost):3000` and create a login account for Flood with "rTorrent Connection Type" set to "Unix Socket" and enter the value for your "RTORRENT_SOCK_PATH".
 
-### Contributing
+## Contributing
 Pull requests are allowed and will be considered if I see fit.
 
-### TODO
+## TODO
 ...
 
-### Other notes
+## Other notes
 hmmm...,,
