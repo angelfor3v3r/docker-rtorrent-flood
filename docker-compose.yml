@@ -1,0 +1,39 @@
+version: "3.7"
+
+services:
+    # rTorrent service
+    rtorrent:
+        build: "rtorrent"
+        container_name: "rtorrent"
+        restart: "always"
+
+        ports:
+            - "6881:6881"   # DHT port
+            - "59200:59200" # default fixed port for rtorrent
+
+        volumes:
+            - "/data/rtorrent/.session:/rtorrent/.session"   # rtorrent session
+            - "/data/rtorrent/files:/rtorrent/files"         # rtorrent files
+            - "/data/rtorrent/watch:/rtorrent/watch"         # rtorrent watch directory
+            - "./rtorrent/rtorrent.rc:/rtorrent/rtorrent.rc" # config file
+
+    # flood service (a web UI for rTorrent)
+    flood:
+        build: "flood"
+        container_name: "flood"
+        restart: "always"
+
+        depends_on:
+            - "rtorrent"
+
+        ports:
+            - "3000:3000" # web UI port
+
+        volumes:
+            - "/data/flood:/data"                            # flood data
+            - "/data/rtorrent/files:/rtorrent/files"         # rtorrent files
+            - "/data/rtorrent/.session/scgi.sock:/scgi.sock" # rtorrent SCGI socket file
+
+        environment: # https://github.com/jfurrow/flood/blob/master/config.docker.js
+            RTORRENT_SOCK_PATH: "/scgi.sock"
+            FLOOD_SECRET: "my_cool_secret"
