@@ -42,7 +42,7 @@ services:
 4. Access `server ip(localhost):3000` and create an account for Flood with "rTorrent Connection Type" set to "Unix Socket" and enter the value for your "RTORRENT_SOCK_PATH".
 
 ## Contributing
-Pull requests are allowed and will be considered if I see fit.
+Pull requests and suggestions are welcome.
 
 ## TODO
 ...
