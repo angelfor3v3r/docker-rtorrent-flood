@@ -1,5 +1,5 @@
 # docker-rtorrent-flood
-rTorrent & Flood for Docker.
+[rTorrent](https://github.com/rakshasa/rtorrent "rTorrent's Github") & [Flood](https://github.com/Flood-UI/flood "Flood's Github") for Docker.
 
 ## Usage
 1. Edit `docker-compose.yml` and set up your volumes for rTorrent:
