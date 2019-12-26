@@ -45,7 +45,8 @@ services:
 Pull requests and suggestions are welcome.
 
 ## TODO
-...
+* simplify set up
+* fix rtorrent volumes so it can read from multiple rtorrent services (flood doesn't work unless it can read from the same directory, etc...)
 
 ## Other notes
 hmmm...,,
