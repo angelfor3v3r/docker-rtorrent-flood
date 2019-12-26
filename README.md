@@ -39,7 +39,7 @@ services:
 
 3. Run `docker-compose up -d`.
 
-4. Access `server ip(localhost):3000` and create an account for Flood with "rTorrent Connection Type" set to "Unix Socket" and enter the value for your "RTORRENT_SOCK_PATH".
+4. Access `server ip:3000` and create an account for Flood with "rTorrent Connection Type" set to "Unix Socket" and enter the value for your "RTORRENT_SOCK_PATH".
 
 ## Contributing
 Pull requests and suggestions are welcome.
