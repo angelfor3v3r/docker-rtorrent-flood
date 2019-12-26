@@ -3,9 +3,10 @@
 ###########################################################################
 
 # docker hub tags
-ARG ALPINE_TAG="3.11"
+ARG ALPINE_TAG="3.11.2" # alpine must be at least version 3.3 (since it has support for "--no-cache")
 
 # git tags
+ARG LIBXML2_TAG="v2.9.10"
 ARG LIBTORRENT_TAG="v0.13.8"
 ARG RTORRENT_TAG="v0.9.8"
 
@@ -13,10 +14,10 @@ ARG RTORRENT_TAG="v0.9.8"
 ################################ build stage ################################
 #############################################################################
 
-# alpine must be at least version 3.3 (since it has support for "--no-cache")
 FROM alpine:${ALPINE_TAG} AS builder
 
 # move some args into scope for the builder
+ARG LIBXML2_TAG
 ARG LIBTORRENT_TAG
 ARG RTORRENT_TAG
 
@@ -34,19 +35,30 @@ RUN apk add --no-cache \
         pkgconfig      \
         subversion
 
+############### clone, build & install libxml2 ################
+
+WORKDIR /tmp/libxml2_src
+
+RUN \
+    git clone https://gitlab.gnome.org/GNOME/libxml2.git --branch ${LIBXML2_TAG} .; \
+    ./autogen.sh;                                                                   \
+    ./configure;                                                                    \
+    make -j$(nproc);                                                                \
+    make install
+
 ################ clone, build & install xmlrpc-c ################
 
 WORKDIR /tmp/xmlrpc-c_src
 
 RUN \
-    svn checkout https://svn.code.sf.net/p/xmlrpc-c/code/super_stable/ .; \
-    ./configure                                                           \
-        --disable-abyss-server                                            \
-        --disable-cgi-server                                              \
-        --disable-libwww-client                                           \
-        --disable-wininet-client                                          \
-        --disable-libxml2-backend;                                        \
-    make -j$(nproc);                                                      \
+    svn checkout https://svn.code.sf.net/p/xmlrpc-c/code/stable/ .; \
+    ./configure                                                     \
+        --disable-abyss-server                                      \
+        --disable-cgi-server                                        \
+        --disable-libwww-client                                     \
+        --disable-wininet-client                                    \
+        --enable-libxml2-backend;                                   \
+    make -j$(nproc);                                                \
     make install
 
 ################ clone, build & install libTorrent ################
@@ -85,16 +97,15 @@ RUN apk add --no-cache \
         ncurses-dev
 
 # copy built libs & binaries from the builder stage (only copy the ones rTorrent needs)
-COPY --from=builder /usr/local/bin/rtorrent /usr/local/bin/rtorrent
-COPY --from=builder /usr/local/lib/libtorrent.so* /usr/local/lib/
+COPY --from=builder /usr/local/lib/libxml2.so* /usr/local/lib/
 COPY --from=builder /usr/local/lib/libxmlrpc_server.so* /usr/local/lib/
 COPY --from=builder /usr/local/lib/libxmlrpc.so* /usr/local/lib/
 COPY --from=builder /usr/local/lib/libxmlrpc_util.so* /usr/local/lib/
-COPY --from=builder /usr/local/lib/libxmlrpc_xmlparse.so.* /usr/local/lib/
-COPY --from=builder /usr/local/lib/libxmlrpc_xmltok.so* /usr/local/lib/
+COPY --from=builder /usr/local/lib/libtorrent.so* /usr/local/lib/
+COPY --from=builder /usr/local/bin/rtorrent /usr/local/bin/rtorrent
 
 # create some volumes
-VOLUME [ "/rtorrent/.session", "/rtorrent/watch", "/rtorrent/files" ]
+VOLUME [ "/rtorrent", "/rtorrent/.session", "/rtorrent/watch", "/rtorrent/files" ]
 
 # start rtorrent
 ENTRYPOINT [ "rtorrent", "-n", "-o", "import=/rtorrent/rtorrent.rc" ]
