@@ -3,7 +3,8 @@
 ###########################################################################
 
 # docker hub tags
-ARG ALPINE_TAG="3.11.2" # alpine must be at least version 3.3 (since it has support for "--no-cache")
+# alpine must be at least version 3.3 (since it has support for "--no-cache")
+ARG ALPINE_TAG="3.11.2"
 
 # git tags
 ARG LIBXML2_TAG="v2.9.10"
